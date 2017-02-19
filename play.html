@@ -54,7 +54,7 @@
     <sub>温馨提示：按ctrl键也可以开始哦~~~</sub>
 </center>
 <div class="ranking">
-	<h4>前10名</h4>
+
 	<table></table>
 </div>
 <!-- 尾部start -->
@@ -77,9 +77,9 @@
         <div class="modal-content">
           <form onsubmit="return save(this)">
             <input type="hidden" name="store" />
-            <input type="text" class="form-control" name="name" placeholder="取个名字吧">
-	        <h2>很遗憾，你挂了！共获得了 <strong></strong> 分，是否保存？</h2>
-            <button class="btn">保存</button>
+ 
+	        <h2>很遗憾，你挂了！共获得了 <strong></strong> 分，是否重来？</h2>
+            <button class="btn" onclick="location.reload()">重来</button>
             <button type="button" onclick="$('.modal').modal('hide')" class="btn">算了</button>
           </form>
         </div>
@@ -90,45 +90,6 @@
 <script type="text/javascript" src="./js/jquery1.11.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>
 <script>
-	//获取评论者的浏览器信息和屏幕尺寸
-	var useragent = window.navigator.userAgent;
-	var size = window.screen.width + ' * ' + window.screen.height;
-
-	//获取前十排行榜
-	(function(){
-		$('.ranking table').load('http://www.copydm.com/blog/index.php/Home/Index/ranking');
-	})();
-
-	//保存玩家分数
-	function save(obj) {
-		if ($(obj).find('input[name=name]').val().length <= 0) {
-			$(obj).find('input[name=name]').css('border', '1px solid #a00')[0].focus();
-			return false;
-		} else {
-			$(obj).find('input[name=name]').css('border', '1px solid #ccc');
-
-			//获取review评论ID
-		  	var store = $(obj).find('input[name=store]').val();
-  			var name = $(obj).find('input[name=name]').val();
-
-		  	$(obj).find('button').attr('disabled', true);
-		  	$.ajax({
-		    	url: 'http://www.copydm.com/blog/index.php/Home/Index/play',
-		    	data: {store:store, name:name, browser: useragent, screen: size},
-		    	type: 'post',
-		    	dataType: 'json', 
-		    	success: function(res){
-		      		if (res['status']) {
-				        location.reload();
-			      	} else {
-			        	alert(res['msg']);
-			      	}
-		    	}
-		  	})
-		}
-		return false;
-	}
-
 	var rows = 30;	//表格的行
 	var cols = 100;	//表格的列
 	var timer;		//定时器
