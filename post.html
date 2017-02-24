@@ -97,7 +97,7 @@
            
             <span class="copy-author">Slaron版权所有</span>
             <img src="./images/beian.png"> 
-            <a href="http://www.miitbeian.gov.cn/" style="text-decoration:underline" target="_blank">粤ICP备 17019287号</a>
+            <a href="http://www.miitbeian.gov.cn/" id="ba" target="_blank">粤ICP备 17019287号</a>
         </div>
     </div>
 </footer>
@@ -107,6 +107,16 @@
 <script type="text/javascript" src="./js/jquery1.11.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>
 <script src="./js/post.js"></script>
-
+<script>
+    var ba = document.getElementById('ba')
+    ba.onmouseover = function()
+    {
+        ba.style.textDecoration = 'underline';
+    }
+    ba.onmouseout = function()
+    {
+        ba.style.textDecoration = '';
+    }
+    </script>
 </body>
 </html>
