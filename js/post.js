@@ -124,3 +124,149 @@ function pao(flag) {
 //============== 点击跑动滚动条 end
 
 
+//======================= 评论列表 start
+$.ajax({
+  url: 'http://182.92.233.100/blog/Admin/Index/getView',
+  type: 'post',
+  data: {pid: $_GET['id']},
+  dataType: 'json',
+  success: function(res){
+    var str = '';
+    if (res) {
+      for (var i = 0,len = res.length; i < len; i++) {
+        //评论内容
+        str += '<div class="post-comment" rid="'+ res[i]['id'] +'"><div> <strong class="text-danger small">#'+ (i+1) +' </strong> '+ res[i]['name'] +'<span class="pull-right">评论于 '+ res[i]['addtime']+'</span></div><div class="review-content">'+ res[i]['content'] +'<ul>';
+
+        //评论下的回复列表
+        if (res[i]['reply']) {
+          for (var j = 0, leng = res[i]['reply'].length; j < leng; j++) {
+            str += '<li>'+ res[i]['reply'][j]['name'] +'：'+ res[i]['reply'][j]['content'] +'</li>';
+          };
+        }
+
+        str += '</ul></div></div>';
+      }
+
+    } else {
+      str += '<div class="post-comment">暂无评论，快来抢沙发吧~~~</div>';
+    }
+    $('#review').html(str);
+  }
+})
+//======================= 评论列表 end
+
+
+//======================= 添加评论 start
+//获取评论者的浏览器信息和屏幕尺寸
+var useragent = window.navigator.userAgent;
+var size = window.screen.width + ' * ' + window.screen.height;
+
+function review(obj){
+  var content = $(obj).find('textarea').val();
+  if (content.length < 5 || content.match(/^ +$/)) {
+    alert('多说两个字嘛~~~');
+    return false;
+  }
+  //获取评论者昵称
+  var name = $(obj).find('input[name=name]').val() || '匿名';
+  if (name.match(/^ +$/)) name = '匿名';
+  
+  $(obj).find('button').attr('disabled', true);
+  //ajax提交添加数据
+  $.ajax({
+    url: 'http://182.92.233.100/blog/Admin/Index/review',
+    type: 'post',
+    data: {pid:$_GET['id'], name: name, content:content, browser: useragent, screen: size},
+    dataType: 'json',
+    success: function(res){
+      if (res) {
+        //将评论的内容增加到页面上
+        var floor = $('#review > .post-comment:last .small').text();
+        if (floor) {
+          floor = parseInt(floor.substr(1)) + 1;
+        } else {
+          floor = 1;
+        }
+        var str = '<div class="post-comment" rid="'+ res['id'] +'"><div> <strong class="text-danger small">#'+ floor +' </strong> '+ name +'<span class="pull-right">评论于 '+ res['addtime'] +'</span></div><div class="review-content">'+ content +'<ul></ul></div></div>';
+
+        //判断是否是沙发
+        if (floor == 1) {
+          $('#review').html(str);
+        } else {
+          $('#review').append(str);
+        }
+
+        //回复按钮状态
+        $(obj).find('button').attr('disabled', false);
+        //清空表单
+        $('form')[0].reset();
+      } else {
+        alert(res.msg);
+      }
+    }
+  })
+  return false;
+}
+//======================= 添加评论 end
+
+
+//======================= 给评论列表绑定鼠标事件，显示/隐藏回复按钮
+$('#review').on('mouseenter', '.post-comment', function(){
+  //判断有评论才显示回复按钮
+  if ($(this).attr('rid')) {
+    $(this).find('.review-content').before('<button class="btn pull-right" onclick="replyInfo('+ $(this).attr('rid') +')">回复</button>');
+  }
+});
+$('#review').on('mouseleave', '.post-comment', function(){
+  $(this).find('button').remove();
+});
+
+//======================= 显示模态框
+function replyInfo(rid) {
+  $('input[name=rid]').val(rid);
+  $('.modal').modal({
+    keyboard: false
+  })
+}
+
+
+//======================= 处理回复操作 start
+function reply(obj){
+  var content = $(obj).find('textarea').val();
+  if (content.length < 3 || content.match(/^ +$/)) {
+    alert('多说两个字吧');
+    return false;
+  };
+
+  //获取回复者昵称
+  var name = $(obj).find('input[name=name]').val() || '匿名';
+  if (name.match(/^ +$/)) name = '匿名';
+
+  //获取review评论ID
+  var rid = $(obj).find('input[name=rid]').val();
+
+  $(obj).find('button').attr('disabled', true);
+  $.ajax({
+    url: 'http://182.92.233.100/blog/Admin/Index/reply',
+    data: {rid:rid, name:name, content:content, browser: useragent, screen: size},
+    type: 'post',
+    dataType: 'json', 
+    success: function(res){
+      if (res['status']) {
+        //添加回复到页面
+        $('.post-comment[rid='+ rid +'] ul').append('<li>'+ name +'： '+ content +'</li>');
+
+        //恢复按钮状态
+        $(obj).find('button').attr('disabled', false);
+        //清除表单数据
+        $('.modal').find('form')[0].reset();
+        //隐藏模态框
+        $('.modal').modal('hide');
+      } else {
+        alert(res['msg']);
+      }
+    }
+  })
+  return false;
+}
+//======================= 处理回复操作 end

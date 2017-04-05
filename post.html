@@ -58,10 +58,23 @@
                         
                     </section>
                 </article>
-                 <div class="post-navigation">
+
+                <div class="post-navigation">
+                </div>
+
+                <span>评论列表</span>
+                <div id="review">
+                    <div class="post-comment">
+                        暂无评论，快来抢沙发吧~~~
+                    </div>
                 </div>
                 
                 <div class="post-comment">
+                    <form onsubmit="return review(this)">
+                      <input type="text" name="name" placeholder="昵称" /><br>
+                      <textarea name="content" placeholder="评论内容" require cols="90" rows="3"></textarea><br>
+                      <button class="btn btn-sm">写好了</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -80,8 +93,6 @@
         </div>
       </div>
     </div>
-    <!-- 小模态框 -->
-             
 
 <!-- 按钮 start -->
 <div class="position-btn text-info" onclick="pao(true)"><i class="glyphicon glyphicon-arrow-up"></i>顶部</div>
@@ -97,7 +108,7 @@
            
             <span class="copy-author">Slaron版权所有</span>
             <img src="./images/beian.png"> 
-            <a href="http://www.miitbeian.gov.cn/" id="ba" target="_blank">粤ICP备 17019287号</a>
+            <a href="http://www.miitbeian.gov.cn/" target="_blank" id="ba">粤ICP备 17019287号</a>
         </div>
     </div>
 </footer>
@@ -107,16 +118,6 @@
 <script type="text/javascript" src="./js/jquery1.11.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>
 <script src="./js/post.js"></script>
-<script>
-    var ba = document.getElementById('ba')
-    ba.onmouseover = function()
-    {
-        ba.style.textDecoration = 'underline';
-    }
-    ba.onmouseout = function()
-    {
-        ba.style.textDecoration = '';
-    }
-    </script>
+
 </body>
 </html>
